@@ -1,9 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 #define MAX_LINE 80
-#define MAX_ARGS 40
+#define MAX_ARGS 4
 
 void printArray(char *args[], char len) {
 	printf("printArray > ARRAY LEN: %d\n", len);	
@@ -12,7 +13,15 @@ void printArray(char *args[], char len) {
 	}
 }
 
+void emptyPointerArray(char *args[], char len) {
+	for (char i = 0; i < len; i++) {
+		free(args[i]);
+		args[i] = NULL;
+	}
+}
+
 void setup(char inputBuffer[], char *args[], int *background) {
+	emptyPointerArray(args, MAX_ARGS);
 	int lenght;
 	lenght = read(STDIN_FILENO, inputBuffer, MAX_LINE);	
 	char argIndex = 0;
@@ -36,24 +45,37 @@ void setup(char inputBuffer[], char *args[], int *background) {
 		for (char j = 0; j < size; j++) {
 			*(args[argIndex] + j) = inputBuffer[lenght - 1 - size + j];	
 		}
-		*(args[argIndex++] + size) = '\0';
+		*(args[argIndex] + size) = '\0';
+		
+		if (*(args[argIndex]) == '&') {
+			args[argIndex] = NULL;
+			*background = 1;
+		}	
 	}
-	if (background) {
-		args[argIndex++] = "&";
-	}
-	printArray(args, MAX_ARGS);
-	execvp(args[0], args);
 }		
 
 int main() {
+	printf("Hello, that is the Xell V.1\n");
+	printf("Galileo University, 2016.\n");
+	printf("===========================\n");
+
 	char inputBuffer[MAX_LINE];
 	int background;
 	char *args[MAX_ARGS] = {NULL};
-	while(1) {			
-		background = 1;
-		printf("$-> ");
-		setup(inputBuffer, args, &background);	
-		printf("\n");
+	while(1) {
+		background = 0;
+		printf("%s","baquiax@baquiax:$ \n");
+		setup(inputBuffer, args, &background);		
+		pid_t pid = fork();
+		if (pid < 0) {
+			printf("%s\n", "An error has been happened!");
+		} else if (pid == 0) {
+			execvp(args[0], args);
+		} else {
+			if (!background) {			
+				wait(NULL);								
+			}
+		}
 	}
 }
 
