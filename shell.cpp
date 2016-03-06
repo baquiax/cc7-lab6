@@ -4,7 +4,7 @@
 #include <sys/wait.h>
 
 #define MAX_LINE 80
-#define MAX_ARGS 4
+#define MAX_ARGS 40
 
 void printArray(char *args[], char len) {
 	printf("printArray > ARRAY LEN: %d\n", len);	
