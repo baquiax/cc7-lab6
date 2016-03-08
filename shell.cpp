@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 
 #define MAX_LINE 80
-#define MAX_ARGS 4
+#define MAX_ARGS 40
 #define MAX_HISTORY 10
 
 char history[MAX_HISTORY][MAX_LINE] ;
