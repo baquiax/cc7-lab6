@@ -48,7 +48,7 @@ void showHistory(int signum) {
 }
 
 int findCommand(char initWith[]) {
-    for (char i = 0; i < MAX_HISTORY; i++) {
+    for (char i = stackCounter - 1; i >= 0; i--) {
         if (strlen(history[i])) {
             if(strncmp(history[i], initWith, strlen(initWith)) == 0) {
                 return i;  
